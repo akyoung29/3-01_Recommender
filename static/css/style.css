@@ -1,0 +1,94 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Layout */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    display: flex;
+    padding-top: 30px; /* Adds some space from the top */
+    margin: 0;
+    height: 100vh; /* Full height */
+    flex-direction: column; /* Stack content vertically */
+    text-align: center; /* Center the text */
+}
+
+/* Title */
+h1 {
+    margin-bottom: 20px;
+}
+
+/* Content ID Selection Form */
+#content_id_selection {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin: 0 auto; /* Centers the form horizontally */
+    margin-bottom: 20px; /* Space below the form */
+}
+
+/* Form elements */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the items horizontally */
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+select, button {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%; /* Make the select and button fill the container */
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Recommendations Section */
+#recommendations {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin: 0 auto; /* Centers the recommendations section horizontally */
+    margin-top: 20px;
+}
+
+/* Recommendation Heading */
+h2 {
+    margin-bottom: 15px;
+}
+
+/* Recommendation List */
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li {
+    padding: 5px 0;
+    font-size: 16px;
+}

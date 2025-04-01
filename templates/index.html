@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Recommendation</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Article Recommendation System</h1>
+    <br><br>
+    <div id="content_id_selection">
+        <form method="POST" action="/">
+            <label for="content_id">Select Content ID:</label>
+            <select name="content_id" id="content_id">
+                <option value="" disabled selected>Select Content ID</option> <!-- Default option -->
+                {% for content_id in content_ids %}
+                    <option value="{{ content_id }}">{{ content_id }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Get Recommendations</button>
+        </form>
+    </div>
+
+    {% if recommendations %}
+    <div id="recommendations">
+        <h2>Recommended Articles for {{ content_id }}</h2>  <!-- Display selected content_id -->
+        <ul>
+            {% for recommendation in recommendations %}
+                <li>{{ recommendation }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
