@@ -4,36 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article Recommendation</title>
-    <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #ecf0f1;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+    </style>
 </head>
 <body>
-    <h1>Article Recommendation System</h1>
-    <br><br>
-    <div id="content_id_selection">
-        <form method="POST" action="/">
-            <label for="content_id">Select Content ID:</label>
-            <select name="content_id" id="content_id">
-                <option value="" disabled selected>Select Content ID</option> <!-- Default option -->
-                {% for content_id in content_ids %}
-                    <option value="{{ content_id }}">{{ content_id }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Get Recommendations</button>
-        </form>
-    </div>
+    <div class="container">
+        <h1>Article Recommendation System</h1>
 
-    {% if recommendations %}
-    <div id="recommendations">
-        <h2>Recommended Articles for {{ content_id }}</h2>  <!-- Display selected content_id -->
-        <ul>
-            {% for recommendation in recommendations %}
-                <li>{{ recommendation }}</li>
-            {% endfor %}
-        </ul>
+        <div class="form-group">
+            <form method="POST" action="/">
+                <label for="selected_content_id">Select Content ID:</label>
+                <select name="selected_content_id" id="selected_content_id" required>
+                    <option value="" disabled selected>Select a Content ID</option>
+                    {% for content_id in content_ids %}
+                        <option value="{{ content_id }}">{{ content_id }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <button type="submit">Get Recommendations</button>
+            </form>
+        </div>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if content_recommendations or collaborative_recommendations %}
+            <div id="recommendations">
+                <h2>Content-Based Recommendations</h2>
+                <h3>For Content ID: {{ selected_content_id }}</h3>
+                <ul>
+                    {% for recommendation in content_recommendations %}
+                        <li>{{ recommendation[0] }} - {{ recommendation[1] }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <h2>Collaborative Filtering Recommendations</h2>
+                <h3>For Content ID: {{ selected_content_id }}</h3>
+                <ul>
+                    {% for recommendation in collaborative_recommendations %}
+                        <li>{{ recommendation[0] }} - {{ recommendation[1] }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </div>
-    {% endif %}
-    
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 </html>
