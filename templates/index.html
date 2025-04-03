@@ -105,7 +105,7 @@
             <p class="error">{{ error }}</p>
         {% endif %}
 
-        {% if content_recommendations or collaborative_recommendations %}
+        {% if content_recommendations or collaborative_recommendations or azure_recommendations %}
             <div id="recommendations">
                 <h2>Content-Based Recommendations</h2>
                 <h3>For Content ID: {{ selected_content_id }}</h3>
@@ -119,6 +119,14 @@
                 <h3>For Content ID: {{ selected_content_id }}</h3>
                 <ul>
                     {% for recommendation in collaborative_recommendations %}
+                        <li>{{ recommendation[0] }} - {{ recommendation[1] }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Azure Model Recommendations</h2>
+                <h3>For Content ID: {{ selected_content_id }}</h3>
+                <ul>
+                    {% for recommendation in azure_recommendations %}
                         <li>{{ recommendation[0] }} - {{ recommendation[1] }}</li>
                     {% endfor %}
                 </ul>
