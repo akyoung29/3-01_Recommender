@@ -3,6 +3,7 @@ import pickle
 import joblib
 import pandas as pd
 import numpy as np
+import requests  # Added for Azure endpoint call
 
 app = Flask(__name__)
 
@@ -40,6 +41,10 @@ knn_model = joblib.load("models/knn_model.sav")
 # Extract content IDs for the dropdown, limited to first 5
 content_ids = df_content['contentId'].tolist()[:5]
 
+# Azure endpoint details (replace with actual values from your group member)
+AZURE_ENDPOINT_URL = "http://e8dc850d-4e76-4a7b-88b1-4e1e40ea4505.eastus2.azurecontainer.io/score"  # Replace with actual endpoint URL
+AZURE_API_KEY = "TDPjqIW0IZcz81zoTMZloMQ1IMYI5e6K"  # Replace with actual API key if required
+
 # Recommendation function for content filtering
 def recommend_articles(content_id, num_recommendations=5):
     if content_id not in df_content['contentId'].values:
@@ -67,10 +72,30 @@ def recommend_articles_knn(content_id, num_recommendations=5):
             return recommended_articles
     return df_filtered[['contentId', 'title']].sample(n=min(num_recommendations, len(df_filtered))).values.tolist()
 
+# Recommendation function for Azure model
+def recommend_articles_azure(content_id, num_recommendations=5):
+    try:
+        # Prepare the payload for the Azure endpoint
+        payload = {"contentId": content_id, "num_recommendations": num_recommendations}
+        headers = {"Authorization": f"Bearer {AZURE_API_KEY}", "Content-Type": "application/json"}
+
+        # Make the request to the Azure endpoint
+        response = requests.post(AZURE_ENDPOINT_URL, json=payload, headers=headers)
+        response.raise_for_status()  # Raise an exception for bad status codes
+
+        # Assuming the response is a JSON list of [contentId, title] pairs
+        recommendations = response.json()
+        return recommendations[:num_recommendations]  # Limit to requested number
+    except Exception as e:
+        # Fallback in case of error (e.g., endpoint down or malformed response)
+        print(f"Azure endpoint error: {str(e)}")
+        return df_content[['contentId', 'title']].sample(n=min(num_recommendations, len(df_content))).values.tolist()
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     content_recommendations = None
     collaborative_recommendations = None
+    azure_recommendations = None
     selected_content_id = None
     error = None
 
@@ -80,9 +105,10 @@ def index():
         if selected_content_id:
             try:
                 selected_content_id = int(selected_content_id)
-                # Get recommendations from both models based on contentId
+                # Get recommendations from all three models based on contentId
                 content_recommendations = recommend_articles(selected_content_id)
                 collaborative_recommendations = recommend_articles_knn(selected_content_id)
+                azure_recommendations = recommend_articles_azure(selected_content_id)
             except ValueError:
                 error = "Invalid Content ID. Please select a valid option."
             except Exception as e:
@@ -94,6 +120,7 @@ def index():
                            content_ids=content_ids,
                            content_recommendations=content_recommendations,
                            collaborative_recommendations=collaborative_recommendations,
+                           azure_recommendations=azure_recommendations,
                            selected_content_id=selected_content_id,
                            error=error,
                            cache_buster=str(np.random.randint(1000000)))
